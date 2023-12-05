@@ -32,6 +32,7 @@ class AudioEditorObserver:
         elif event == "AudioTrackRemoved": message = "Audio track removed"
         elif event == "AudioCopied": message = "Audio copied to clipboard"
         elif event == "AudioCut": message = "Audio cut successfully"
+        elif event == "Waveform": message = "The WAVE  graph has been successfully built"
         elif event == "list_audio_tracks":
             if args: message = f"List of audio tracks: {args[0]}"
             else: message = "List of audio tracks"

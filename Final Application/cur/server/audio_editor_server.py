@@ -1,5 +1,7 @@
-from cur.adapter.audio_adapter import AudioAdapter
+import numpy as np
 
+from cur.adapter.audio_adapter import AudioAdapter
+import matplotlib.pyplot as plt
 
 class AudioEditorServer:
     def __init__(self, observer):
@@ -31,7 +33,30 @@ class AudioEditorServer:
             "lat": self.list_audio_tracks,
             "sct": self.save_current_track,
             "duration": self.get_audio_track_duration,
+            "waveform": self.plot_waveform,
         }
+
+    def plot_waveform(self):
+        try:
+            if self.audio_data:
+                samples = np.array(self.audio_data.get_array_of_samples(), dtype=np.float32)
+                samples /= np.max(np.abs(samples))
+                plt.figure(figsize=(15, 4))
+                plt.plot(samples)
+                plt.title('Waveform')
+                plt.xlabel('Time')
+                plt.ylabel('Amplitude')
+                plt.show()
+                self.observer.notify("Waveform")
+                return ''
+            else:
+                return "No audio data available to plot waveform"
+        except Exception as e:
+            return f"Error plotting waveform: {str(e)}"
+
+
+
+
 
     def list_audio_tracks(self):
         try:
