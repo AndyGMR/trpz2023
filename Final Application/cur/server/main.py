@@ -12,14 +12,14 @@ def handle_client(client_socket, mediator):
         if not command:
             break
         response = mediator.handle_command(command)
-        client_socket.sendall(response.encode())
+        client_socket.sendall(response.encode('utf-8'))
 
     client_socket.close()
     print("Client disconnected.")
 
 def main():
     host = "localhost"
-    port = 5513
+    port = 5514
     observer = AudioEditorObserver()
     server = AudioEditorServer(observer)
     mediator = Mediator(server, observer)

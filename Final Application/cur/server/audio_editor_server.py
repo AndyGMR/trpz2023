@@ -1,7 +1,8 @@
 import numpy as np
-
 from cur.adapter.audio_adapter import AudioAdapter
 import matplotlib.pyplot as plt
+from cur.server.database import CommandDatabase
+
 
 class AudioEditorServer:
     def __init__(self, observer):
@@ -34,7 +35,18 @@ class AudioEditorServer:
             "sct": self.save_current_track,
             "duration": self.get_audio_track_duration,
             "waveform": self.plot_waveform,
+            "list_logs": self.list_commands
         }
+
+
+    def list_commands(self):
+        try:
+            with CommandDatabase() as db:
+                commands = db.list_commands()
+            self.observer.notify('list_commands', commands)
+            return ''
+        except Exception as e:
+            return f"Error listing commands: {str(e)}"
 
     def plot_waveform(self):
         try:
@@ -338,11 +350,17 @@ class AudioEditorServer:
             return "No audio selected for cutting"
 
     def handle_command(self, command):
-        parts = command.split(" ")
-        if parts[0] in self.commands:
-            if len(parts) > 1:
-                return self.commands[parts[0]](*parts[1:])
+        try:
+            with CommandDatabase() as db:
+                db.log_command(command)
+
+            parts = command.split(" ")
+            if parts[0] in self.commands:
+                if len(parts) > 1:
+                    return self.commands[parts[0]](*parts[1:])
+                else:
+                    return self.commands[parts[0]]()
             else:
-                return self.commands[parts[0]]()
-        else:
-            return "Invalid command"
+                return "Invalid command"
+        except Exception as e:
+            return f"Error handling command: {str(e)}"

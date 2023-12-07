@@ -2,7 +2,7 @@ import socket
 
 def main():
     host = "localhost"
-    port = 5513
+    port = 5514
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
         client_socket.connect((host, port))
